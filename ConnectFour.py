@@ -70,6 +70,7 @@ class ConnectFour:
         elif self.game_over and self.winner is not None:
             print("END OF GAME")
             self.reset_game()
+            self.board.play_sound("cheer.mp3")
 
             self.update_board_colors()
         elif self.game_over == False:
