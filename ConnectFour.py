@@ -74,8 +74,14 @@ class ConnectFour:
             self.reset_game()
             if color == PLAYER1:
                 self.board.play_sound("cheer.mp3")
+                for cols in range(COLS):
+                    for rows in range(ROWS):
+                        self.board.set_cell_color(cols, rows+2, PLAYER1)
             if color == PLAYER2:
                 self.board.play_sound("aww.mp3")
+                for cols in range(COLS):
+                    for rows in range(ROWS):
+                        self.board.set_cell_color(cols, rows+2, PLAYER2)
 
             self.update_board_colors()
         elif green_button_pushed == True and x == 7 and y == 0:
