@@ -107,7 +107,8 @@ class ConnectFour:
         for col in range(COLS):
             if self.game_over:
                 if col == RESET_COL:
-                    self.board.set_cell_color(col, CONTROL_ROW, RESET)
+                    for col in range(COLS):
+                        self.board.set_cell_color(col, CONTROL_ROW, RESET)
                 else:
                     self.board.set_cell_color(col, CONTROL_ROW, OFF)
             elif self.is_column_full(col):
