@@ -1,7 +1,6 @@
 import typing
 import time
-
-
+import random
 
 from enum import Enum
 
@@ -26,6 +25,8 @@ RESET = (40, 255, 40)
 
 green_button_pushed = False
 
+vsAI = False
+
 class ConnectFour:
     def __init__(self, board: typing.Optional[AbstractNeoTrellisGame] = None):
         self.board = board if board is not None else NeoTrellisGame()
@@ -33,7 +34,10 @@ class ConnectFour:
         self.register_callbacks()
         self.reset_game()
         self.board.play_sound("clack.mp3")
+        self.state = "menu"
+        self.show_menu()
 
+    #Reset game after a loss or win
     def reset_game(self):
         self.game_state = [[OFF] * COLS for _ in range(ROWS)]
         self.game_over = False
@@ -44,6 +48,19 @@ class ConnectFour:
         self.current_player = PLAYER1
         self.board.update_display()    
         self.update_board_colors()
+        self.show_menu()
+
+    def show_menu(self):
+        self.board.set_cell_color(0, 0, PLAYER1)
+        self.board.set_cell_color(1, 0, OFF)
+        self.board.set_cell_color(2, 0, OFF)
+        self.board.set_cell_color(3, 0, OFF)
+        self.board.set_cell_color(4, 0, OFF)
+        self.board.set_cell_color(5, 0, OFF)
+        self.board.set_cell_color(6, 0, OFF)
+        self.board.set_cell_color(7, 0, PLAYER2)
+
+        self.board.update_display()
 
     def register_callbacks(self):
         #TODO: Register callbacks that will be run when buttons are pressed and released
@@ -51,6 +68,18 @@ class ConnectFour:
             self.board.set_callback(i, 0, self.handle_button_event) # Example of how to register a callback (function) for button 0, 0. Must be done for every button that runs a function
             self.board.activate_key(i, 0, Action.BUTTON_PRESSED) # Even though the callback is set, if the key is not enabled it will not be run. This is how you enable
     def handle_button_event(self, x:int, y: int, action: Action):
+        global green_button_pushed
+        global vsAI
+        if self.state == "menu" and x == 0 and y == 0:
+            vsAI = True
+            self.state = "playing"
+            self.update_board_colors()
+            return
+        elif self.state == "menu" and x == 7 and y == 0:
+            vsAI = False
+            self.state = "playing"
+            self.update_board_colors()
+            return
         if self.game_over:
             self.reset_game()
 
@@ -78,6 +107,16 @@ class ConnectFour:
         elif self.game_over == False:
             self.switch_player()
             self.update_board_colors()
+
+            if vsAI and self.current_player == PLAYER2:
+                columns = []
+                for col in range(COLS):
+                    if self.is_column_full(col) == False:
+                        columns.append(col)
+
+                self.place_piece(random.choice(columns))
+                self.switch_player()
+                self.update_board_colors()
 
 
     def find_lowest_empty_row(self, col: int):
