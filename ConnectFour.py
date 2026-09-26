@@ -38,9 +38,9 @@ class ConnectFour:
 
     def register_callbacks(self):
         #TODO: Register callbacks that will be run when buttons are pressed and released
-        self.board.set_callback(0, 0, self.handle_button_event) # Example of how to register a callback (function) for button 0, 0. Must be done for every button that runs a function
-        self.board.activate_key(0, 0, Action.BUTTON_PRESSED) # Even though the callback is set, if the key is not enabled it will not be run. This is how you enable
-  
+        for i in range(8):
+            self.board.set_callback(i, 0, self.handle_button_event) # Example of how to register a callback (function) for button 0, 0. Must be done for every button that runs a function
+            self.board.activate_key(i, 0, Action.BUTTON_PRESSED) # Even though the callback is set, if the key is not enabled it will not be run. This is how you enable
     def handle_button_event(self, x:int, y: int, action: Action):
         if self.game_over:
             self.reset_game()
@@ -112,10 +112,6 @@ class ConnectFour:
         
         print("Current Player: ", self.current_player)
 
-    def show_current_player(self):
-        #TODO: Function to indicate on the board which player is currently placing a piece
-        pass
-
     def is_board_full(self):
         for col in range(COLS):
             if self.is_column_full(col) == False:
@@ -140,7 +136,6 @@ class ConnectFour:
         return True
 
     def check_win(self):
-        #TODO: Check the game state to see if any player has won or if there is a draw
         pass
 
     def show_winner(self):
