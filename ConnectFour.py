@@ -251,7 +251,7 @@ class ConnectFour:
             print("was reset")
             self.reset_game()
             self.update_board_colors()
-            
+            self.board.play_sound("ding.mp3")
         pass
 
 
