@@ -24,6 +24,8 @@ PLAYER1 = (255, 40 , 40)
 PLAYER2 = (40, 40, 255)
 RESET = (40, 255, 40)
 
+green_button_pushed = False
+
 class ConnectFour:
     def __init__(self, board: typing.Optional[AbstractNeoTrellisGame] = None):
         self.board = board if board is not None else NeoTrellisGame()
@@ -68,10 +70,10 @@ class ConnectFour:
         if self.is_board_full() and self.game_over == False:
             self.show_tie_game
         elif self.game_over and self.winner is not None:
-            print("END OF GAME")
-            self.reset_game()
-
+            self.game_over = True
             self.update_board_colors()
+        elif green_button_pushed == True and x == 7 and y == 0:
+            self.reset_game()
         elif self.game_over == False:
             self.switch_player()
             self.update_board_colors()
