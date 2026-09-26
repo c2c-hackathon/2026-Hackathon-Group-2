@@ -68,8 +68,8 @@ class ConnectFour:
             self.board.play_sound("cheer.mp3")
         cells = []
 
-        if self.is_board_full() and self.game_over == False:
-            self.show_tie_game
+        if self.is_board_full():
+            self.show_tie_game()
         elif self.game_over and self.winner is not None:
             self.game_over = True
             self.update_board_colors()
@@ -247,7 +247,11 @@ class ConnectFour:
         pass
 
     def show_tie_game(self):
-        #TODO: Display on the board that there was a draw
+        if self.is_board_full():
+            print("was reset")
+            self.reset_game()
+            self.update_board_colors()
+            
         pass
 
 
