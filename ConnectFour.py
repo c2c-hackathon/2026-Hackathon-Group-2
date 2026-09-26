@@ -1,5 +1,8 @@
 import typing
 import time
+
+
+
 from enum import Enum
 
 from NeoTrellisGame import NeoTrellisGame, AbstractNeoTrellisGame, Action
@@ -30,6 +33,7 @@ class ConnectFour:
         self.game_over = False
         self.register_callbacks()
         self.reset_game()
+        self.board.play_sound("clack.mp3")
 
     def reset_game(self):
         self.game_state = [[OFF] * COLS for _ in range(ROWS)]
@@ -99,7 +103,7 @@ class ConnectFour:
                 self.board.set_cell_color(col, CONTROL_ROW, PLAYER1)
             elif self.current_player == PLAYER2:
                 self.board.set_cell_color(col, CONTROL_ROW, PLAYER2)
-
+        self.board.play_sound("clack.mp3")
         self.board.update_display()
         return
 
