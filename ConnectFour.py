@@ -28,16 +28,19 @@ class ConnectFour:
     def __init__(self, board: typing.Optional[AbstractNeoTrellisGame] = None):
         self.board = board if board is not None else NeoTrellisGame()
         super().__init__()
-        self.game_state = [[OFF] * COLS for _ in range(ROWS)] #TODO: Choose a structure to represent what pieces are currently in the game board
-        self.current_player = PLAYER1
-        self.game_over = False
         self.register_callbacks()
         self.reset_game()
         self.board.play_sound("clack.mp3")
 
     def reset_game(self):
         self.game_state = [[OFF] * COLS for _ in range(ROWS)]
+        self.game_over = False
+        self.winner = None
+        for row in range(WIDTH):
+            for col in range(HEIGHT):
+                self.board.set_cell_color(col, row, OFF)
         self.current_player = PLAYER1
+        self.board.update_display()    
         self.update_board_colors()
 
     def register_callbacks(self):
@@ -58,13 +61,18 @@ class ConnectFour:
         placed_row = self.place_piece(x)
         self.game_state[placed_row][x] = self.current_player
 
+        if self.winner is not None:
+            self.game_over = True
         cells = []
 
         if self.is_board_full() and self.game_over == False:
             self.show_tie_game
-        elif self.game_over and cells is not None:
-            pass
-        else:
+        elif self.game_over and self.winner is not None:
+            print("END OF GAME")
+            self.reset_game()
+
+            self.update_board_colors()
+        elif self.game_over == False:
             self.switch_player()
             self.update_board_colors()
 
@@ -86,6 +94,8 @@ class ConnectFour:
         self.game_state[target_row][col] = player
         self.board.set_cell_color(col, target_row + BOARD_START_ROW, player)
         self.board.update_display()
+
+        self.check_win(target_row, col)
 
         return target_row
 
@@ -139,8 +149,94 @@ class ConnectFour:
         print("FULL")
         return True
 
-    def check_win(self):
-        pass
+    def check_win(self, row, col):
+        cur_color = self.current_player
+        dr = 1
+        tmp_row = row
+        tmp_col = col
+        row_cnt = 1
+        df_cnt = 1
+        db_cnt = 1
+        col_cnt = 1
+        try:
+            while(tmp_row + dr < 8 and tmp_row + dr >= 0 and self.game_state[tmp_row + dr][col] == cur_color):
+                row_cnt = row_cnt + 1
+                tmp_row += dr
+        except IndexError:
+            pass
+        dr = -1
+        tmp_row = row
+        tmp_col = col
+        try:
+            while(tmp_row + dr < 8 and tmp_row + dr >= 0 and self.game_state[tmp_row + dr][tmp_col] == cur_color):
+                row_cnt = row_cnt + 1
+                tmp_row += dr
+        except IndexError:
+            pass
+
+        dc = 1
+        tmp_row = row
+        tmp_col = col
+        try:
+            while(tmp_col + dc < 8 and tmp_col + dc >= 0 and self.game_state[tmp_row][tmp_col + dc] == cur_color):
+                col_cnt = col_cnt + 1
+                tmp_col += dc
+        except IndexError:
+            pass
+
+        dc = -1
+        tmp_row = row
+        tmp_col = col
+        try:
+            while(tmp_col + dc < 8 and tmp_col + dc >= 0 and self.game_state[tmp_row][tmp_col + dc] == cur_color):
+                col_cnt = col_cnt + 1
+                tmp_col += dc
+        except IndexError:
+            pass
+
+        df = 1
+        tmp_row = row
+        tmp_col = col
+        try:
+            while(tmp_col + df < 8 and tmp_col + df >= 0 and tmp_row + df < 8 and tmp_row + df >= 0 and self.game_state[tmp_row + df][tmp_col + df] == cur_color):
+                df_cnt = df_cnt + 1    
+                tmp_col += df 
+                tmp_row += df
+        except IndexError:
+            pass
+
+        df = -1
+        tmp_row = row
+        tmp_col = col
+        try:
+            while(tmp_row + df < 8 and tmp_row + df >= 0 and tmp_col + df < 8 and tmp_col + df >= 0 and self.game_state[tmp_row + df][tmp_col + df] == cur_color):
+                df_cnt = df_cnt + 1
+                tmp_col += df 
+                tmp_row += df
+        except IndexError:
+            pass
+        tmp_row = row
+        tmp_col = col
+        try:
+            while(tmp_row + df < 8 and tmp_row + df >= 0 and tmp_col + df < 8 and tmp_col + df >= 0 and self.game_state[tmp_row - df][tmp_col + df] == cur_color):
+                db_cnt = db_cnt + 1
+                tmp_col += df 
+                tmp_row -= df
+        except IndexError:
+            pass
+        tmp_row = row
+        tmp_col = col
+        try:
+            while(tmp_row + df < 8 and tmp_row + df >= 0 and tmp_col + df < 8 and tmp_col + df >= 0 and self.game_state[tmp_row + df][tmp_col - df] == cur_color):
+                db_cnt = db_cnt + 1
+                tmp_col -= df 
+                tmp_row += df
+        except IndexError:
+            pass
+
+        if col_cnt == 4 or row_cnt == 4 or df_cnt == 4 or db_cnt == 4:
+            self.winner = cur_color
+
 
     def show_winner(self):
         #TODO: Display on the board who won
