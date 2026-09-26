@@ -1,14 +1,36 @@
 import typing
+import time
+from Enum import enum
 
 from NeoTrellisGame import NeoTrellisGame, AbstractNeoTrellisGame, Action
 from adafruit_neotrellis.multitrellis import MultiTrellis
 from adafruit_neotrellis.neotrellis import NeoTrellis
 
+WIDTH = 8
+HEIGHT = 8
+
+ROWS = 6
+COLS = 8
+
+CONTROL_ROW = 0
+RESET_COL = 7
+BOARD_START_ROW = 2
+
+OFF = (0, 0, 0)
+PLAYER1 = (255, 40 , 40)
+PLAYER2 = (40, 40, 255)
+RESET = (40, 255, 40)
+
+class CellState(enum):
+    EMPTY = 0
+    PLAYER1 = 1
+    PLAYER2 = 2
+
 class ConnectFour:
     def __init__(self, board: typing.Optional[AbstractNeoTrellisGame] = None):
         self.board = board if board is not None else NeoTrellisGame()
         super().__init__()
-        self.game_state = [] #TODO: Choose a structure to represent what pieces are currently in the game board
+        self.game_state = [[CellState.EMPTY] * C] #TODO: Choose a structure to represent what pieces are currently in the game board
 
     def reset_game(self):
         #TODO reset the game state to its original empty state
