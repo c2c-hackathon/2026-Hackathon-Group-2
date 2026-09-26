@@ -1,6 +1,6 @@
 import typing
 import time
-from Enum import enum
+from enum import Enum
 
 from NeoTrellisGame import NeoTrellisGame, AbstractNeoTrellisGame, Action
 from adafruit_neotrellis.multitrellis import MultiTrellis
@@ -21,68 +21,123 @@ PLAYER1 = (255, 40 , 40)
 PLAYER2 = (40, 40, 255)
 RESET = (40, 255, 40)
 
-class CellState(enum):
-    EMPTY = 0
-    PLAYER1 = 1
-    PLAYER2 = 2
-
 class ConnectFour:
     def __init__(self, board: typing.Optional[AbstractNeoTrellisGame] = None):
         self.board = board if board is not None else NeoTrellisGame()
         super().__init__()
-        self.game_state = [[CellState.EMPTY] * C] #TODO: Choose a structure to represent what pieces are currently in the game board
+        self.game_state = [[OFF] * COLS for _ in range(ROWS)] #TODO: Choose a structure to represent what pieces are currently in the game board
+        self.current_player = PLAYER1
+        self.game_over = False
+        self.register_callbacks()
+        self.reset_game()
 
     def reset_game(self):
-        #TODO reset the game state to its original empty state
-        pass
+        self.game_state = [[OFF] * COLS for _ in range(ROWS)]
+        self.current_player = PLAYER1
+        self.update_board_colors()
 
     def register_callbacks(self):
         #TODO: Register callbacks that will be run when buttons are pressed and released
         self.board.set_callback(0, 0, self.handle_button_event) # Example of how to register a callback (function) for button 0, 0. Must be done for every button that runs a function
         self.board.activate_key(0, 0, Action.BUTTON_PRESSED) # Even though the callback is set, if the key is not enabled it will not be run. This is how you enable
-
-        pass
   
     def handle_button_event(self, x:int, y: int, action: Action):
-        """
-        This is an example of how a callback function will look. It takes an x value, y value, and action, which will indicate what button activated the callback and what action the user did to run it.
-        See NeoTrellisGame.set_callback() for info about callbacks.
-        """
-        #TODO: Implement what will happen when the button at position x,y is pressed or released
-  
-        pass
+        if self.game_over:
+            self.reset_game()
+
+        if y != CONTROL_ROW or self.is_column_full(x):
+            print("Not top row or column full")
+            return
+
+        print("in handle button")
+        color = self.get_player_color(self.current_player)
+        placed_row = self.place_piece(x)
+        self.game_state[placed_row][x] = self.current_player
+
+        cells = []
+
+        if self.is_board_full() and self.game_over == False:
+            self.show_tie_game
+        elif self.game_over and cells is not None:
+            pass
+        else:
+            self.switch_player()
+            self.update_board_colors()
+
 
     def find_lowest_empty_row(self, col: int):
-        #TODO: Return the lowest empty row in the column.
-        pass
+        for row in range(ROWS -1, -1, -1):
+            if self.game_state[row][col] == OFF:
+                return row
+        return None
 
     def place_piece(self, col: int):
-        #TODO: Finds the legal move in the column, and updates the game state to reflect the new piece, checking to see if a player has won with that new piece. Don't forget to play a sound!
-        pass
+        target_row = self.find_lowest_empty_row(col)
+        print("IN PLACE PIECE")
+
+        if target_row is None:
+            return None
+
+        player = self.current_player
+        self.game_state[target_row][col] = player
+        self.board.set_cell_color(col, target_row + BOARD_START_ROW, player)
+        self.board.update_display()
+
+        return target_row
 
     def update_board_colors(self):
         #TODO: Take the current game state and update the board colors accordingly. Hint: look at NeoTrellisGame.py for functions to update the colors and display the colors
-        pass
+        for col in range(COLS):
+            if self.game_over:
+                if col == RESET_COL:
+                    self.board.set_cell_color(col, CONTROL_ROW, RESET)
+                else:
+                    self.board.set_cell_color(col, CONTROL_ROW, OFF)
+            elif self.is_column_full(col):
+                self.board.set_cell_color(col, CONTROL_ROW, OFF)
+            elif self.current_player == PLAYER1:
+                self.board.set_cell_color(col, CONTROL_ROW, PLAYER1)
+            elif self.current_player == PLAYER2:
+                self.board.set_cell_color(col, CONTROL_ROW, PLAYER2)
+
+        self.board.update_display()
+        return
 
     def switch_player(self):
-        #TODO: Change which player is curently placing a piece. Keep track of this in some sort of variable
-        pass
+        print("In switchPlayer")
+        if self.current_player == PLAYER1:
+            self.current_player = PLAYER2
+        else:
+            self.current_player = PLAYER1
+        
+        print("Current Player: ", self.current_player)
 
     def show_current_player(self):
         #TODO: Function to indicate on the board which player is currently placing a piece
         pass
 
     def is_board_full(self):
-        #TODO: Return whether or not the game state has no more legal moves
-        pass  
+        for col in range(COLS):
+            if self.is_column_full(col) == False:
+                print("NOT FULL")
+                return False
+        return True
 
     def get_player_color(self, player) -> tuple[int, int, int]:
-        #TODO: Return the color for the given player 
-        pass
+        if player == PLAYER1:
+            return PLAYER1
+        elif player == PLAYER2:
+            return PLAYER2
+        else:
+            return OFF
 
     def is_column_full(self, col: int):
-        #TODO: Return if the given column is currently full
-        pass
+        for row in range(ROWS - 1):
+            if self.game_state[row][col] == OFF:
+                print(row)
+                return False
+        print("FULL")
+        return True
 
     def check_win(self):
         #TODO: Check the game state to see if any player has won or if there is a draw
