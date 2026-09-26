@@ -71,7 +71,19 @@ class ConnectFour:
         if self.is_board_full() and self.winner is None:
             self.show_tie_game()
         elif self.game_over and self.winner is not None:
-            self.game_over = True
+            print("END OF GAME")
+            self.reset_game()
+            if color == PLAYER1:
+                self.board.play_sound("cheer.mp3")
+                for cols in range(COLS):
+                    for rows in range(ROWS):
+                        self.board.set_cell_color(cols, rows+2, PLAYER1)
+            if color == PLAYER2:
+                self.board.play_sound("aww.mp3")
+                for cols in range(COLS):
+                    for rows in range(ROWS):
+                        self.board.set_cell_color(cols, rows+2, PLAYER2)
+
             self.update_board_colors()
         elif green_button_pushed == True and x == 7 and y == 0:
             green_button_pushed = False
