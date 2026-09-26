@@ -51,7 +51,6 @@ class ConnectFour:
             self.board.set_callback(i, 0, self.handle_button_event) # Example of how to register a callback (function) for button 0, 0. Must be done for every button that runs a function
             self.board.activate_key(i, 0, Action.BUTTON_PRESSED) # Even though the callback is set, if the key is not enabled it will not be run. This is how you enable
     def handle_button_event(self, x:int, y: int, action: Action):
-        global green_button_pushed 
         if self.game_over:
             self.reset_game()
 
@@ -66,27 +65,15 @@ class ConnectFour:
 
         if self.winner is not None:
             self.game_over = True
+            self.board.play_sound("cheer.mp3")
         cells = []
 
-        if self.is_board_full() and self.winner is None:
-            self.show_tie_game()
+        if self.is_board_full() and self.game_over == False:
+            self.show_tie_game
         elif self.game_over and self.winner is not None:
-            print("END OF GAME")
-            self.reset_game()
-            if color == PLAYER1:
-                self.board.play_sound("cheer.mp3")
-                for cols in range(COLS):
-                    for rows in range(ROWS):
-                        self.board.set_cell_color(cols, rows+2, PLAYER1)
-            if color == PLAYER2:
-                self.board.play_sound("aww.mp3")
-                for cols in range(COLS):
-                    for rows in range(ROWS):
-                        self.board.set_cell_color(cols, rows+2, PLAYER2)
-
+            self.game_over = True
             self.update_board_colors()
         elif green_button_pushed == True and x == 7 and y == 0:
-            green_button_pushed = False
             self.reset_game()
         elif self.game_over == False:
             self.switch_player()
@@ -259,5 +246,7 @@ class ConnectFour:
         pass
 
     def show_tie_game(self):
-        self.game_over = True
-        self.update_board_colors()
+        #TODO: Display on the board that there was a draw
+        pass
+
+
