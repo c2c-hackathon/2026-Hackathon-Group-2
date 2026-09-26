@@ -47,8 +47,9 @@ class ConnectFour:
                 self.board.set_cell_color(col, row, OFF)
         self.current_player = PLAYER1
         self.board.update_display()    
-        self.update_board_colors()
         self.show_menu()
+        self.update_board_colors()
+        
 
     def show_menu(self):
         self.board.set_cell_color(0, 0, PLAYER1)
@@ -82,6 +83,7 @@ class ConnectFour:
             return
         if self.game_over:
             self.reset_game()
+            return
 
         if y != CONTROL_ROW or self.is_column_full(x):
             print("Not top row or column full")
