@@ -141,62 +141,85 @@ class ConnectFour:
     def check_win(self, row, col):
         cur_color = self.current_player
         dr = 1
-
+        tmp_row = row
+        tmp_col = col
         row_cnt = 1
         df_cnt = 1
         db_cnt = 1
         col_cnt = 1
         try:
-            while(row + dr < 8 and row + dr >= 0 and self.game_state[row + dr][col] == cur_color):
+            while(tmp_row + dr < 8 and tmp_row + dr >= 0 and self.game_state[tmp_row + dr][col] == cur_color):
                 row_cnt = row_cnt + 1
+                tmp_row += dr
         except IndexError:
             pass
         dr = -1
+        tmp_row = row
+        tmp_col = col
         try:
-            while(row + dr < 8 and row + dr >= 0 and self.game_state[row + dr][col] == cur_color):
+            while(tmp_row + dr < 8 and tmp_row + dr >= 0 and self.game_state[tmp_row + dr][tmp_col] == cur_color):
                 row_cnt = row_cnt + 1
+                tmp_row += dr
         except IndexError:
             pass
 
         dc = 1
-
+        tmp_row = row
+        tmp_col = col
         try:
-            while(col + dc < 8 and col + dc >= 0 and self.game_state[row][col + dc] == cur_color):
+            while(tmp_col + dc < 8 and tmp_col + dc >= 0 and self.game_state[tmp_row][tmp_col + dc] == cur_color):
                 col_cnt = col_cnt + 1
+                tmp_col += dc
         except IndexError:
             pass
 
         dc = -1
+        tmp_row = row
+        tmp_col = col
         try:
-            while(col + dc < 8 and col + dc >= 0 and self.game_state[row][col + dc] == cur_color):
+            while(tmp_col + dc < 8 and tmp_col + dc >= 0 and self.game_state[tmp_row][tmp_col + dc] == cur_color):
                 col_cnt = col_cnt + 1
+                tmp_col += dc
         except IndexError:
             pass
 
         df = 1
+        tmp_row = row
+        tmp_col = col
         try:
-            while(col + df < 8 and col + df >= 0 and row + df < 8 and row + df >= 0 and self.game_state[row + df][col + df] == cur_color):
+            while(tmp_col + df < 8 and tmp_col + df >= 0 and tmp_row + df < 8 and tmp_row + df >= 0 and self.game_state[tmp_row + df][tmp_col + df] == cur_color):
                 df_cnt = df_cnt + 1    
-                print(df_cnt)  
-        except IndexError:
-            pass
-        
-        df = -1
-        try:
-            while(row + df < 8 and row + df >= 0 and col + df < 8 and col + df >= 0 and self.game_state[row + df][col + df] == cur_color):
-                df_cnt = df_cnt + 1
-        except IndexError:
-            pass
-        
-        try:
-            while(row + df < 8 and row + df >= 0 and col + df < 8 and col + df >= 0 and self.game_state[row - df][col + df] == cur_color):
-                db_cnt = db_cnt + 1
+                tmp_col += df 
+                tmp_row += df
         except IndexError:
             pass
 
+        df = -1
+        tmp_row = row
+        tmp_col = col
         try:
-            while(row + df < 8 and row + df >= 0 and col + df < 8 and col + df >= 0 and self.game_state[row + df][col - df] == cur_color):
+            while(tmp_row + df < 8 and tmp_row + df >= 0 and tmp_col + df < 8 and tmp_col + df >= 0 and self.game_state[tmp_row + df][tmp_col + df] == cur_color):
+                df_cnt = df_cnt + 1
+                tmp_col += df 
+                tmp_row += df
+        except IndexError:
+            pass
+        tmp_row = row
+        tmp_col = col
+        try:
+            while(tmp_row + df < 8 and tmp_row + df >= 0 and tmp_col + df < 8 and tmp_col + df >= 0 and self.game_state[tmp_row - df][tmp_col + df] == cur_color):
                 db_cnt = db_cnt + 1
+                tmp_col += df 
+                tmp_row -= df
+        except IndexError:
+            pass
+        tmp_row = row
+        tmp_col = col
+        try:
+            while(tmp_row + df < 8 and tmp_row + df >= 0 and tmp_col + df < 8 and tmp_col + df >= 0 and self.game_state[tmp_row + df][tmp_col - df] == cur_color):
+                db_cnt = db_cnt + 1
+                tmp_col -= df 
+                tmp_row += df
         except IndexError:
             pass
 
