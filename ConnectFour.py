@@ -51,6 +51,7 @@ class ConnectFour:
             self.board.set_callback(i, 0, self.handle_button_event) # Example of how to register a callback (function) for button 0, 0. Must be done for every button that runs a function
             self.board.activate_key(i, 0, Action.BUTTON_PRESSED) # Even though the callback is set, if the key is not enabled it will not be run. This is how you enable
     def handle_button_event(self, x:int, y: int, action: Action):
+        global green_button_pushed 
         if self.game_over:
             self.reset_game()
 
@@ -67,12 +68,13 @@ class ConnectFour:
             self.game_over = True
         cells = []
 
-        if self.is_board_full() and self.game_over == False:
-            self.show_tie_game
+        if self.is_board_full() and self.winner is None:
+            self.show_tie_game()
         elif self.game_over and self.winner is not None:
             self.game_over = True
             self.update_board_colors()
         elif green_button_pushed == True and x == 7 and y == 0:
+            green_button_pushed = False
             self.reset_game()
         elif self.game_over == False:
             self.switch_player()
@@ -245,7 +247,5 @@ class ConnectFour:
         pass
 
     def show_tie_game(self):
-        #TODO: Display on the board that there was a draw
-        pass
-
-
+        self.game_over = True
+        self.update_board_colors()
