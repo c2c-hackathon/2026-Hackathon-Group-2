@@ -25,16 +25,18 @@ class ConnectFour:
     def __init__(self, board: typing.Optional[AbstractNeoTrellisGame] = None):
         self.board = board if board is not None else NeoTrellisGame()
         super().__init__()
-        self.game_state = [[OFF] * COLS for _ in range(ROWS)] #TODO: Choose a structure to represent what pieces are currently in the game board
-        self.current_player = PLAYER1
-        self.game_over = False
-        self.winner = None
         self.register_callbacks()
         self.reset_game()
 
     def reset_game(self):
         self.game_state = [[OFF] * COLS for _ in range(ROWS)]
+        self.game_over = False
+        self.winner = None
+        for row in range(WIDTH):
+            for col in range(HEIGHT):
+                self.board.set_cell_color(col, row, OFF)
         self.current_player = PLAYER1
+        self.board.update_display()    
         self.update_board_colors()
 
     def register_callbacks(self):
@@ -55,13 +57,18 @@ class ConnectFour:
         placed_row = self.place_piece(x)
         self.game_state[placed_row][x] = self.current_player
 
+        if self.winner is not None:
+            self.game_over = True
         cells = []
 
         if self.is_board_full() and self.game_over == False:
             self.show_tie_game
         elif self.game_over and self.winner is not None:
             print("END OF GAME")
-        else:
+            self.reset_game()
+
+            self.update_board_colors()
+        elif self.game_over == False:
             self.switch_player()
             self.update_board_colors()
 
